@@ -89,6 +89,10 @@ var (
 	buildOcDockerfile string
 	//go:embed devdockerfiles/devdockerfile.txt
 	dockerfileDevTemplateUbuntu string
+	//go:embed dockerfiles/DockerfileTemplate.sles
+	dockerfileTemplatesles string
+	//go:embed devdockerfiles/devdockerfile.txt
+	dockerfileDevTemplatesles string
 )
 
 //go:generate mockgen -source=kmmmodule.go -package=kmmmodule -destination=mock_kmmmodule.go KMMModuleAPI
@@ -209,6 +213,8 @@ func resolveDockerfile(cmName string, devConfig *amdv1alpha1.DeviceConfig) (stri
 		if isCIEnvSet && internalUbuntuBaseSet {
 			dockerfileTemplate = strings.Replace(dockerfileTemplate, "ubuntu:$$VERSION", fmt.Sprintf("%v:$$VERSION", internalUbuntuBaseImage), -1)
 		}
+        case "sles":
+		dockerfileTemplate = dockerfileTemplatesles
 	case "coreos":
 		dockerfileTemplate = buildOcDockerfile
 	// FIX ME
@@ -601,6 +607,8 @@ func GetOSName(node v1.Node, devCfg *amdv1alpha1.DeviceConfig) (string, error) {
 }
 
 var cmNameMappers = map[string]func(fullImageStr string) string{
+	"sles":    slesCMNameMapper,
+	"suse":    slesCMNameMapper,
 	"ubuntu":  ubuntuCMNameMapper,
 	"coreos":  rhelCoreOSNameMapper,
 	"rhel":    rhelCMNameMapper,
@@ -629,7 +637,16 @@ func rhelCoreOSNameMapper(osImageStr string) string {
 	}
 	return "coreos-" + osImageStr
 }
-
+func slesCMNameMapper(osImageStr string) string {
+	// Check if the input contains "SUSE Linux Enterprise Server 15"
+	// Use regex to find the release version
+	re := regexp.MustCompile(`(\d+\.\d+)`)
+	matches := re.FindStringSubmatch(osImageStr)
+	if len(matches) > 1 {
+		return fmt.Sprintf("%s-%s", "sles", matches[1])
+	}
+	return "sles-" + osImageStr
+}
 func ubuntuCMNameMapper(osImageStr string) string {
 	splits := strings.Split(osImageStr, " ")
 	os := splits[0]
