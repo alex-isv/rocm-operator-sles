@@ -33,7 +33,6 @@ import (
 
 const (
 	defaultOcDriversVersion    = "6.2.2"
-	Sles15DriverVersion="6.3.2"
 	openShiftNodeLabel         = "node.openshift.io/os_id"
 	NodeFeatureLabelAmdGpu     = "feature.node.kubernetes.io/amd-gpu"
 	NodeFeatureLabelAmdVGpu    = "feature.node.kubernetes.io/amd-vgpu"
@@ -68,7 +67,7 @@ func GetDefaultDriversVersion(node v1.Node) (string, error) {
 
 var defaultDriverversionsMappers = map[string]func(fullImageStr string) (string, error){
 	"ubuntu": UbuntuDefaultDriverVersionsMapper,
-	"sles": Sles15DriverVersion,
+	"sles": SlesDefaultDriverVersionsMapper,
 	"rhel": func(f string) (string, error) {
 		return defaultOcDriversVersion, nil
 	},
@@ -78,6 +77,10 @@ var defaultDriverversionsMappers = map[string]func(fullImageStr string) (string,
 	"red hat": func(f string) (string, error) {
 		return defaultOcDriversVersion, nil
 	},
+}
+
+func SlesDefaultDriverVersionsMapper(fullImageStr string) (string, error) {
+	return "6.3.2", nil 
 }
 
 func UbuntuDefaultDriverVersionsMapper(fullImageStr string) (string, error) {
