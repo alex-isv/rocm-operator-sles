@@ -13,10 +13,10 @@ PROJECT_VERSION ?= v1.2.0
 # user's container runtime may not set DockerHub as default registry and auto-search on DockerHub
 GOFLAGS := "-mod=mod"
 GIT_COMMIT ?= $(shell git rev-parse --short HEAD)
-DOCKER_REGISTRY ?= docker.io/rocm
-IMAGE_NAME ?= gpu-operator
+DOCKER_REGISTRY ?= localhost:5000
+IMAGE_NAME ?= rocm/gpu-operator
 IMAGE_TAG_BASE ?= $(DOCKER_REGISTRY)/$(IMAGE_NAME)
-IMAGE_TAG ?= dev
+IMAGE_TAG ?= latest
 IMG ?= $(IMAGE_TAG_BASE):$(IMAGE_TAG)
 # name used for saving the container images as tar.gz
 DOCKER_CONTAINER_IMG = $(IMAGE_NAME)-$(IMAGE_TAG)
