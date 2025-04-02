@@ -10,7 +10,7 @@ controller:
       # -- KMM signer image for signing driver image's kernel module with given key pairs within cluster
       relatedImageSign: docker.io/rocm/kernel-module-management-signimage:v1.2.0
       # -- KMM worker image for loading / unloading driver kernel module on worker nodes
-      relatedImageWorker: docker.io/rocm/kernel-module-management-worker:1.2.0
+      relatedImageWorker: docker.io/rocm/kernel-module-management-worker:v1.2.0
       # -- Image pull secret name for pulling KMM kaniko builder image if registry needs credential to pull image
       relatedImageBuildPullSecret: ""
       # -- Image pull secret name for pulling KMM signer image if registry needs credential to pull image

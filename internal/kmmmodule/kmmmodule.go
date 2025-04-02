@@ -640,7 +640,7 @@ func rhelCoreOSNameMapper(osImageStr string) string {
 func slesCMNameMapper(osImageStr string) string {
 	// Check if the input contains "SUSE Linux Enterprise Server 15"
 	// Use regex to find the release version
-	re := regexp.MustCompile(`(\d+)\s(SP\d+)`)
+	re := regexp.MustCompile(`(\d+)\s((SP|sp)\d+)`)
 	matches := re.FindStringSubmatch(osImageStr)
 	if len(matches) > 1 {
 		return fmt.Sprintf("%s-%s%s", "sles", matches[1], matches[2])
