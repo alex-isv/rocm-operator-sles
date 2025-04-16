@@ -19,8 +19,8 @@ spec:
     # kubectl create secret docker-registry mysecret -n kmm-namespace --docker-username=xxx --docker-password=xxx
     # Make sure you created the secret within the namespace that KMM operator is running
     # Specify the driver version by using ROCm version
-    imageRegistrySecret:
-      name: mysecret
+#   imageRegistrySecret:
+ #    name: mysecret
     version: "6.3.2"
 
   devicePlugin:
