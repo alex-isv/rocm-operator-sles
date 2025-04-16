@@ -21,7 +21,8 @@ RUN depmod ${KERNEL_VERSION}
 
 FROM registry.suse.com/suse/sle15:15.6
 ARG KERNEL_FULL_VERSION
-RUN  zypper --gpg-auto-import-keys refresh
+RUN zypper --gpg-auto-import-keys refresh
+RUN zypper install -y mokutil
 RUN zypper --no-gpg-checks install -y kmod
 
 RUN mkdir -p /opt/lib/modules/${KERNEL_FULL_VERSION}/updates
