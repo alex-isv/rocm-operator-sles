@@ -2,13 +2,6 @@
 node-feature-discovery:
   # -- Set to true/false to enable/disable the installation of node feature discovery (NFD) operator
   enabled: true
-  worker:
-    tolerations:
-      - key: "amd-dcm"
-        operator: "Equal"
-        value: "up"
-        effect: "NoExecute"
-
 # KMM related configs
 kmm:
   # -- Set to true/false to enable/disable the installation of kernel module management (KMM) operator
