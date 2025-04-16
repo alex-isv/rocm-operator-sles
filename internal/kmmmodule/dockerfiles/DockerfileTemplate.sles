@@ -1,4 +1,4 @@
-FROM registry.suse.com/suse/sle15:latest as builder
+FROM registry.suse.com/suse/sle15:15.6 as builder
 ENV ADDITIONAL_MODULES sle-module-desktop-applications, sle-module-development-tools, PackageHub
 ARG KERNEL_FULL_VERSION
 ARG DRIVERS_VERSION
@@ -19,7 +19,7 @@ RUN amdgpu-install --usecase=dkms -y
 RUN depmod ${KERNEL_VERSION}
 
 
-FROM registry.suse.com/suse/sle15:latest
+FROM registry.suse.com/suse/sle15:15.6
 ARG KERNEL_FULL_VERSION
 RUN  zypper --gpg-auto-import-keys refresh
 RUN zypper --no-gpg-checks install -y kmod
