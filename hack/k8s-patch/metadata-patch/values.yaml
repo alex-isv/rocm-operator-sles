@@ -29,9 +29,9 @@ controllerManager:
       allowPrivilegeEscalation: false
     image:
       # -- AMD GPU operator controller manager image repository
-      repository: docker.io/rocm/gpu-operator
+      repository: docker.io/rocm/rocm/gpu-operator
       # -- AMD GPU operator controller manager image tag
-      tag: dev
+      tag: latest
     # -- Image pull policy for AMD GPU operator controller manager pod
     imagePullPolicy: Always
     # -- Image pull secret name for pulling AMD GPU operator controller manager image if registry needs credential to pull image

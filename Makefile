@@ -13,7 +13,7 @@ PROJECT_VERSION ?= v1.2.0
 # user's container runtime may not set DockerHub as default registry and auto-search on DockerHub
 GOFLAGS := "-mod=mod"
 GIT_COMMIT ?= $(shell git rev-parse --short HEAD)
-DOCKER_REGISTRY ?= localhost:5000
+DOCKER_REGISTRY ?= docker.io/rocm
 IMAGE_NAME ?= rocm/gpu-operator
 IMAGE_TAG_BASE ?= $(DOCKER_REGISTRY)/$(IMAGE_NAME)
 IMAGE_TAG ?= latest
@@ -426,6 +426,7 @@ define go-get-tool
     set -e; \
     echo "Downloading $(2)"; \
     echo "Running: GOBIN=$(PROJECT_DIR)/bin go install $(2)"; \
+    echo "PATH=$PATH"; \
     GOBIN=$(PROJECT_DIR)/bin go install $(2); \
     }
 endef

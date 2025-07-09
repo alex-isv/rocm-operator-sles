@@ -213,7 +213,7 @@ func resolveDockerfile(cmName string, devConfig *amdv1alpha1.DeviceConfig) (stri
 		if isCIEnvSet && internalUbuntuBaseSet {
 			dockerfileTemplate = strings.Replace(dockerfileTemplate, "ubuntu:$$VERSION", fmt.Sprintf("%v:$$VERSION", internalUbuntuBaseImage), -1)
 		}
-        case "sles":
+	case "sles":
 		dockerfileTemplate = dockerfileTemplatesles
 	case "coreos":
 		dockerfileTemplate = buildOcDockerfile
@@ -444,14 +444,14 @@ func setKMMModuleLoader(ctx context.Context, mod *kmmv1beta1.Module, devConfig *
 	mod.Spec.ModuleLoader.ServiceAccountName = "amd-gpu-operator-kmm-module-loader"
 	mod.Spec.ImageRepoSecret = devConfig.Spec.Driver.ImageRegistrySecret
 	mod.Spec.Selector = getNodeSelector(devConfig)
-	mod.Spec.Tolerations = []v1.Toleration{
+	/*mod.Spec.Tolerations = []v1.Toleration{
 		{
 			Key:      "amd-gpu-driver-upgrade",
 			Value:    "true",
 			Operator: v1.TolerationOpEqual,
 			Effect:   v1.TaintEffectNoSchedule,
 		},
-	}
+	}*/
 	return nil
 }
 

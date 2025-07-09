@@ -135,8 +135,8 @@ Kubernetes: `>= 1.29.0-0`
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | controllerManager.affinity | object | `{"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"preference":{"matchExpressions":[{"key":"node-role.kubernetes.io/control-plane","operator":"Exists"}]},"weight":1}]}}` | Deployment affinity configs for controller manager |
-| controllerManager.manager.image.repository | string | `"docker.io/rocm/gpu-operator"` | AMD GPU operator controller manager image repository |
-| controllerManager.manager.image.tag | string | `"dev"` | AMD GPU operator controller manager image tag |
+| controllerManager.manager.image.repository | string | `"docker.io/rocm/rocm/gpu-operator"` | AMD GPU operator controller manager image repository |
+| controllerManager.manager.image.tag | string | `"latest"` | AMD GPU operator controller manager image tag |
 | controllerManager.manager.imagePullPolicy | string | `"Always"` | Image pull policy for AMD GPU operator controller manager pod |
 | controllerManager.manager.imagePullSecrets | string | `""` | Image pull secret name for pulling AMD GPU operator controller manager image if registry needs credential to pull image |
 | controllerManager.nodeSelector | object | `{}` | Node selector for AMD GPU operator controller manager deployment |

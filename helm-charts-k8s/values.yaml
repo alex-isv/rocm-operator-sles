@@ -2,6 +2,13 @@
 node-feature-discovery:
   # -- Set to true/false to enable/disable the installation of node feature discovery (NFD) operator
   enabled: true
+  worker:
+    tolerations:
+      - key: "amd-dcm"
+        operator: "Equal"
+        value: "up"
+        effect: "NoExecute"
+
 # KMM related configs
 kmm:
   # -- Set to true/false to enable/disable the installation of kernel module management (KMM) operator
@@ -19,14 +26,12 @@ controllerManager:
     args:
     - --config=controller_manager_config.yaml
     containerSecurityContext:
-      allowPrivilegeEscalation: true
-   #  runAsUser: 1000
-      runAsNonRoot: true
+      allowPrivilegeEscalation: false
     image:
       # -- AMD GPU operator controller manager image repository
-      repository: registry.hub.docker.com/yeey/rocm-gpu-operator-sles
+      repository: docker.io/rocm/rocm/gpu-operator
       # -- AMD GPU operator controller manager image tag
-      tag: v1.1
+      tag: latest
     # -- Image pull policy for AMD GPU operator controller manager pod
     imagePullPolicy: Always
     # -- Image pull secret name for pulling AMD GPU operator controller manager image if registry needs credential to pull image
