@@ -80,7 +80,7 @@ var defaultDriverversionsMappers = map[string]func(fullImageStr string) (string,
 }
 
 func SlesDefaultDriverVersionsMapper(fullImageStr string) (string, error) {
-	return "6.4.0", nil
+	return "6.4.1", nil
 }
 
 func UbuntuDefaultDriverVersionsMapper(fullImageStr string) (string, error) {
