@@ -67,7 +67,7 @@ func GetDefaultDriversVersion(node v1.Node) (string, error) {
 
 var defaultDriverversionsMappers = map[string]func(fullImageStr string) (string, error){
 	"ubuntu": UbuntuDefaultDriverVersionsMapper,
-	"sles":   SlesDefaultDriverVersionsMapper,
+	
 	"rhel": func(f string) (string, error) {
 		return defaultOcDriversVersion, nil
 	},
@@ -80,7 +80,7 @@ var defaultDriverversionsMappers = map[string]func(fullImageStr string) (string,
 }
 
 func SlesDefaultDriverVersionsMapper(fullImageStr string) (string, error) {
-	return "6.4.1", nil
+	return "6.4.0", nil
 }
 
 func UbuntuDefaultDriverVersionsMapper(fullImageStr string) (string, error) {
