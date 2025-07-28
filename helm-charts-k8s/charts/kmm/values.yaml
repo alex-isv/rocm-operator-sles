@@ -19,9 +19,10 @@ controller:
       relatedImageWorkerPullSecret: ""
     image:
       # -- KMM controller manager image repository
-      repository: ghcr.io/alex-isv/amd-gpu-operator-sles-kmm-controller
+#     repository: ghcr.io/alex-isv/amd-gpu-operator-sles-kmm-controller
+      repository: deusventorum/rocm-gpu-operator-sles
       # -- KMM controller manager image tag
-      tag: v3
+      tag: v1.1
     # -- Image pull policy for KMM controller manager pod
     imagePullPolicy: Always
     # -- Image pull secret name for pulling KMM controller manager image if registry needs credential to pull image

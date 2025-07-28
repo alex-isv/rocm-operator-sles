@@ -30,10 +30,10 @@ controllerManager:
     image:
       # -- AMD GPU operator controller manager image repository
 #     repository: docker.io/rocm/rocm/gpu-operator
-#     repository: deusventorum/rocm-gpu-operator-sles
-      repository: ghcr.io/alex-isv/amd-gpu-operator-sles-kmm-controller
+      repository: deusventorum/rocm-gpu-operator-sles
+#     repository: ghcr.io/alex-isv/amd-gpu-operator-sles-kmm-controller
       # -- AMD GPU operator controller manager image tag
-      tag: v3
+      tag: v1.1
     # -- Image pull policy for AMD GPU operator controller manager pod
     imagePullPolicy: Always
     # -- Image pull secret name for pulling AMD GPU operator controller manager image if registry needs credential to pull image
