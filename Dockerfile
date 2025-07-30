@@ -55,14 +55,14 @@ COPY --from=builder /opt/app-root/src/helm-charts-k8s/crds/deviceconfig-crd.yaml
     /opt/app-root/src/helm-charts-k8s/charts/kmm/crds/module-crd.yaml \
     /opt/app-root/src/helm-charts-k8s/charts/kmm/crds/nodemodulesconfig-crd.yaml \
     /opt/helm-charts-crds-k8s/
-COPY --from=builder /opt/app-root/src/helm-charts-openshift/crds/deviceconfig-crd.yaml \
-    /opt/app-root/src/helm-charts-openshift/charts/nfd/crds/nodefeature-crd.yaml \
-    /opt/app-root/src/helm-charts-openshift/charts/nfd/crds/nodefeaturediscovery-crd.yaml \
-    /opt/app-root/src/helm-charts-openshift/charts/nfd/crds/nodefeaturerule-crd.yaml \
-    /opt/app-root/src/helm-charts-openshift/charts/nfd/crds/noderesourcetopology-crd.yaml \
-    /opt/app-root/src/helm-charts-openshift/charts/kmm/crds/module-crd.yaml \
-    /opt/app-root/src/helm-charts-openshift/charts/kmm/crds/nodemodulesconfig-crd.yaml \
-    /opt/helm-charts-crds-openshift/
+#COPY --from=builder /opt/app-root/src/helm-charts-openshift/crds/deviceconfig-crd.yaml \
+#    /opt/app-root/src/helm-charts-openshift/charts/nfd/crds/nodefeature-crd.yaml \
+#    /opt/app-root/src/helm-charts-openshift/charts/nfd/crds/nodefeaturediscovery-crd.yaml \
+#    /opt/app-root/src/helm-charts-openshift/charts/nfd/crds/nodefeaturerule-crd.yaml \
+#    /opt/app-root/src/helm-charts-openshift/charts/nfd/crds/noderesourcetopology-crd.yaml \
+#    /opt/app-root/src/helm-charts-openshift/charts/kmm/crds/module-crd.yaml \
+#    /opt/app-root/src/helm-charts-openshift/charts/kmm/crds/nodemodulesconfig-crd.yaml \
+#    /opt/helm-charts-crds-openshift/
 
 RUN microdnf update -y && \
     microdnf install -y shadow-utils jq && \

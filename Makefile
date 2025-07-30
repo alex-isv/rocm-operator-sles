@@ -148,7 +148,7 @@ docker/shell: docker-build-env ## Bring up and attach to a container that has de
 		bash -c "cd /gpu-operator && git config --global --add safe.directory /gpu-operator && bash"
 
 .PHONY: all
-all: generate manager manifests helm-k8s helm-openshift bundle-build docker-build
+all: generate manager manifests helm-k8s bundle-build docker-build
 
 ##@ General
 
@@ -180,7 +180,6 @@ update-registry:
 	-e 's|newName:.*$$|newName: ${IMAGE_TAG_BASE}|' \
 	config/manager-base/kustomization.yaml config/manager/kustomization.yaml \
 	hack/k8s-patch/metadata-patch/values.yaml helm-charts-k8s/values.yaml \
-	hack/openshift-patch/metadata-patch/values.yaml helm-charts-openshift/values.yaml \
 	example/deviceconfig_example.yaml
 	sed -i -e 's|tag:.*$$|tag: ${KMM_IMAGE_TAG}|' \
 	-e 's|repository:.*operator.*$$|repository: ${KMM_OPERATOR_IMG_NAME}|' \
@@ -318,34 +317,35 @@ helm-k8s: helmify manifests kustomize clean-helm-k8s gen-kmm-charts-k8s ## Build
 	cd $(shell pwd)/helm-charts-k8s; helm dependency update; helm lint; cd ..; helm package helm-charts-k8s/ --destination ./helm-charts-k8s
 	mv $(shell pwd)/helm-charts-k8s/gpu-operator-charts-$(PROJECT_VERSION).tgz $(shell pwd)/helm-charts-k8s/gpu-operator-helm-k8s-$(PROJECT_VERSION).tgz
 
-.PHONY: helm-openshift
-helm-openshift: helmify manifests kustomize clean-helm-openshift gen-nfd-charts-openshift gen-kmm-charts-openshift
-	$(KUSTOMIZE) build config/default | $(HELMIFY) helm-charts-openshift
-	# Patching openshift helm chart metadata
-	cp $(shell pwd)/hack/openshift-patch/metadata-patch/*.yaml $(shell pwd)/helm-charts-openshift/
-	# Patching openshift helm chart template
-	cp $(shell pwd)/hack/openshift-patch/template-patch/*.yaml $(shell pwd)/helm-charts-openshift/templates/
-	# Patching openshift helm chart nfd subchart
-	cp $(shell pwd)/hack/openshift-patch/openshift-nfd-patch/crds/* $(shell pwd)/helm-charts-openshift/charts/nfd/crds/
-	cp $(shell pwd)/hack/openshift-patch/openshift-nfd-patch/metadata-patch/* $(shell pwd)/helm-charts-openshift/charts/nfd/
-	# Patching openshift helm chart kmm subchart
-	cp $(shell pwd)/hack/openshift-patch/openshift-kmm-patch/template-patch/* $(shell pwd)/helm-charts-openshift/charts/kmm/templates/
-	cp $(shell pwd)/hack/openshift-patch/openshift-kmm-patch/metadata-patch/*.yaml $(shell pwd)/helm-charts-openshift/charts/kmm/
-	# opeartor already has device-plugin rbac yaml, removing the redundant rbac yaml from subchart
-	rm $(shell pwd)/helm-charts-openshift/charts/kmm/templates/device-plugin-rbac.yaml
+####
+#.PHONY: helm-openshift
+#helm-openshift: helmify manifests kustomize clean-helm-openshift gen-nfd-charts-openshift gen-kmm-charts-openshift
+#	$(KUSTOMIZE) build config/default | $(HELMIFY) helm-charts-openshift
+#	# Patching openshift helm chart metadata
+#	cp $(shell pwd)/hack/openshift-patch/metadata-patch/*.yaml $(shell pwd)/helm-charts-openshift/
+#	# Patching openshift helm chart template
+#	cp $(shell pwd)/hack/openshift-patch/template-patch/*.yaml $(shell pwd)/helm-charts-openshift/templates/
+#	# Patching openshift helm chart nfd subchart
+#	cp $(shell pwd)/hack/openshift-patch/openshift-nfd-patch/crds/* $(shell pwd)/helm-charts-openshift/charts/nfd/crds/
+#	cp $(shell pwd)/hack/openshift-patch/openshift-nfd-patch/metadata-patch/* $(shell pwd)/helm-charts-openshift/charts/nfd/
+#	# Patching openshift helm chart kmm subchart
+#	cp $(shell pwd)/hack/openshift-patch/openshift-kmm-patch/template-patch/* $(shell pwd)/helm-charts-openshift/charts/kmm/templates/
+#	cp $(shell pwd)/hack/openshift-patch/openshift-kmm-patch/metadata-patch/*.yaml $(shell pwd)/helm-charts-openshift/charts/kmm/
+#	# opeartor already has device-plugin rbac yaml, removing the redundant rbac yaml from subchart
+#	rm $(shell pwd)/helm-charts-openshift/charts/kmm/templates/device-plugin-rbac.yaml
 	# opeartor already has module-loader rbac yaml, removing the redundant rbac yaml from subchart
-	rm $(shell pwd)/helm-charts-openshift/charts/kmm/templates/module-loader-rbac.yaml
-	cd $(shell pwd)/helm-charts-openshift; helm dependency update; helm lint; cd ..;
-	mkdir $(shell pwd)/helm-charts-openshift/crds
-	echo "moving crd yaml files to crds folder"
-	@for file in $(CRD_YAML_FILES); do \
-		helm template amd-gpu helm-charts-openshift -s templates/$$file > $(shell pwd)/helm-charts-openshift/crds/$$file; \
-	done
-	rm $(shell pwd)/helm-charts-openshift/templates/*crd.yaml
-	echo "dependency update, lint and pack charts"
-	cd $(shell pwd)/helm-charts-openshift; helm dependency update; helm lint; cd ..; helm package helm-charts-openshift/ --destination ./helm-charts-openshift
-	mv $(shell pwd)/helm-charts-openshift/gpu-operator-charts-$(PROJECT_VERSION).tgz $(shell pwd)/helm-charts-openshift/gpu-operator-helm-openshift-$(PROJECT_VERSION).tgz
-
+#	rm $(shell pwd)/helm-charts-openshift/charts/kmm/templates/module-loader-rbac.yaml
+#	cd $(shell pwd)/helm-charts-openshift; helm dependency update; helm lint; cd ..;
+#	mkdir $(shell pwd)/helm-charts-openshift/crds
+#	echo "moving crd yaml files to crds folder"
+#	@for file in $(CRD_YAML_FILES); do \
+#		helm template amd-gpu helm-charts-openshift -s templates/$$file > $(shell pwd)/helm-charts-openshift/crds/$$file; \
+#	done
+#	rm $(shell pwd)/helm-charts-openshift/templates/*crd.yaml
+#	echo "dependency update, lint and pack charts"
+#	cd $(shell pwd)/helm-charts-openshift; helm dependency update; helm lint; cd ..; helm package helm-charts-openshift/ --destination ./helm-charts-openshift
+#	mv $(shell pwd)/helm-charts-openshift/gpu-operator-charts-$(PROJECT_VERSION).tgz $(shell pwd)/helm-charts-openshift/gpu-operator-helm-openshift-$(PROJECT_VERSION).tgz
+#
 .PHONY: bundle-build
 bundle-build: operator-sdk manifests kustomize ## OpenShift Build OLM bundle.
 	rm -fr ./bundle
@@ -512,15 +512,15 @@ helm-uninstall: ## Undeploy Helm Charts.
 		$(MAKE) helm-uninstall-openshift; \
 	fi
 
-helm-install-openshift:
-	helm install amd-gpu-operator ${GPU_OPERATOR_CHART} -n kube-amd-gpu --create-namespace ${SKIP_NFD_CMD} ${SKIP_KMM_CMD} ${HELM_OC_CMD} ${SIM_ENABLE_CMD}
-
-helm-uninstall-openshift:
-	echo "Deleting all CRs before uninstalling operator..."
-	${KUBECTL_CMD} delete deviceconfigs.amd.com -n kube-amd-gpu --all
-	${KUBECTL_CMD} delete nodefeaturediscoveries.nfd.openshift.io -n kube-amd-gpu --all
-	echo "Uninstalling operator..."
-	helm uninstall amd-gpu-operator -n kube-amd-gpu
+#helm-install-openshift:
+#	helm install amd-gpu-operator ${GPU_OPERATOR_CHART} -n kube-amd-gpu --create-namespace ${SKIP_NFD_CMD} ${SKIP_KMM_CMD} ${HELM_OC_CMD} ${SIM_ENABLE_CMD}
+#
+#helm-uninstall-openshift:
+#	echo "Deleting all CRs before uninstalling operator..."
+#	${KUBECTL_CMD} delete deviceconfigs.amd.com -n kube-amd-gpu --all
+#	${KUBECTL_CMD} delete nodefeaturediscoveries.nfd.openshift.io -n kube-amd-gpu --all
+#	echo "Uninstalling operator..."
+#	helm uninstall amd-gpu-operator -n kube-amd-gpu
 
 helm-install-k8s:
 	helm install -f helm-charts-k8s/values.yaml amd-gpu-operator ${GPU_OPERATOR_CHART} -n kube-amd-gpu --create-namespace ${SKIP_NFD_CMD} ${SKIP_KMM_CMD} ${HELM_OC_CMD} ${SIM_ENABLE_CMD}
@@ -531,27 +531,27 @@ helm-uninstall-k8s:
 	echo "Uninstalling operator..."
 	helm uninstall amd-gpu-operator -n kube-amd-gpu
 
-gen-nfd-charts-openshift:
-	rm -rf /tmp/nfd && git clone https://github.com/openshift/cluster-nfd-operator /tmp/nfd; cd /tmp/nfd; git checkout release-4.16
-	$(KUSTOMIZE) build /tmp/nfd/config/default | $(HELMIFY) helm-charts-openshift/charts/nfd
-	cp $(shell pwd)/hack/openshift-patch/openshift-nfd-patch/metadata-patch/Chart.yaml $(shell pwd)/helm-charts-openshift/charts/nfd/
-	mkdir helm-charts-openshift/charts/nfd/crds
-	@for file in $(OPENSHIFT_CLUSTER_NFD_CRD_YAML_FILES); do \
-		helm template amd-gpu helm-charts-openshift/charts/nfd -s templates/$$file > helm-charts-openshift/charts/nfd/crds/$$file; \
-	done
-	rm helm-charts-openshift/charts/nfd/templates/*crd.yaml
-	rm -rf /tmp/nfd
+#gen-nfd-charts-openshift:
+#	rm -rf /tmp/nfd && git clone https://github.com/openshift/cluster-nfd-operator /tmp/nfd; cd /tmp/nfd; git checkout release-4.16
+#	$(KUSTOMIZE) build /tmp/nfd/config/default | $(HELMIFY) helm-charts-openshift/charts/nfd
+#	cp $(shell pwd)/hack/openshift-patch/openshift-nfd-patch/metadata-patch/Chart.yaml $(shell pwd)/helm-charts-openshift/charts/nfd/
+#	mkdir helm-charts-openshift/charts/nfd/crds
+#	@for file in $(OPENSHIFT_CLUSTER_NFD_CRD_YAML_FILES); do \
+#		helm template amd-gpu helm-charts-openshift/charts/nfd -s templates/$$file > helm-charts-openshift/charts/nfd/crds/$$file; \
+#	done
+#	rm helm-charts-openshift/charts/nfd/templates/*crd.yaml
+#	rm -rf /tmp/nfd
 
-gen-kmm-charts-openshift:
-	rm -rf /tmp/kmm && git clone https://github.com/rh-ecosystem-edge/kernel-module-management.git /tmp/kmm; cd /tmp/kmm; git checkout release-2.3
-	$(KUSTOMIZE) build /tmp/kmm/config/default | $(HELMIFY) helm-charts-openshift/charts/kmm
-	cp $(shell pwd)/hack/openshift-patch/openshift-kmm-patch/metadata-patch/Chart.yaml $(shell pwd)/helm-charts-openshift/charts/kmm/
-	mkdir helm-charts-openshift/charts/kmm/crds
-	@for file in $(OPENSHIFT_KMM_CRD_YAML_FILES); do \
-		helm template amd-gpu helm-charts-openshift/charts/kmm -s templates/$$file > helm-charts-openshift/charts/kmm/crds/$$file; \
-		rm helm-charts-openshift/charts/kmm/templates/$$file; \
-	done
-	rm -rf /tmp/kmm
+#gen-kmm-charts-openshift:
+#	rm -rf /tmp/kmm && git clone https://github.com/rh-ecosystem-edge/kernel-module-management.git /tmp/kmm; cd /tmp/kmm; git checkout release-2.3
+#	$(KUSTOMIZE) build /tmp/kmm/config/default | $(HELMIFY) helm-charts-openshift/charts/kmm
+#	cp $(shell pwd)/hack/openshift-patch/openshift-kmm-patch/metadata-patch/Chart.yaml $(shell pwd)/helm-charts-openshift/charts/kmm/
+#	mkdir helm-charts-openshift/charts/kmm/crds
+#	@for file in $(OPENSHIFT_KMM_CRD_YAML_FILES); do \
+#		helm template amd-gpu helm-charts-openshift/charts/kmm -s templates/$$file > helm-charts-openshift/charts/kmm/crds/$$file; \
+#		rm helm-charts-openshift/charts/kmm/templates/$$file; \
+#	done
+#	rm -rf /tmp/kmm
 
 gen-kmm-charts-k8s:
 ifdef JOB_ID
@@ -575,8 +575,8 @@ cert-manager-uninstall: ## Undeploy cert-manager.
 	helm uninstall cert-manager -n cert-manager
 	${KUBECTL_CMD} delete crd issuers.cert-manager.io clusterissuers.cert-manager.io certificates.cert-manager.io certificaterequests.cert-manager.io orders.acme.cert-manager.io challenges.acme.cert-manager.io
 
-clean-helm-openshift:
-	rm -rf $(shell pwd)/helm-charts-openshift
+#clean-helm-openshift:
+#	rm -rf $(shell pwd)/helm-charts-openshift
 
 clean-helm-k8s:
 	rm -rf $(shell pwd)/helm-charts-k8s
