@@ -29,6 +29,7 @@ controllerManager:
       allowPrivilegeEscalation: false
     image:
       # -- AMD GPU operator controller manager image repository
+      # ghcr.io/alex-isv/amd-gpu-operator-sles-image with a tag: 1.2.0-1 is the latest working build
       repository: ghcr.io/alex-isv/amd-gpu-operator-sles-image
       # -- AMD GPU operator controller manager image tag
       tag: 1.2.0-1
