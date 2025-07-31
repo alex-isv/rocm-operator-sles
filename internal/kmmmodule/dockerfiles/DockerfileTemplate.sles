@@ -1,4 +1,4 @@
-FROM registry.suse.com/suse/sle15:15.6 as build
+FROM registry.suse.com/suse/sle15:15.6 as builder
 ENV ADDITIONAL_MODULES sle-module-desktop-applications, sle-module-development-tools, PackageHub
 ARG KERNEL_FULL_VERSION
 ARG DRIVERS_VERSION
